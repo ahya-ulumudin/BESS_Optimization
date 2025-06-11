@@ -74,8 +74,10 @@ The framework implements a two-stage hybrid metaheuristic approach combining **P
 
 ![Placement_Optimization](figures_summary/Placement_PSO_TS_33bus_20250612_011740/figure_04.png)  
 *Projected BESS Location | PSO–TS*
+![Sizing_Optimization](figures_summary/optimal_size.png)  
+*BESS Optimal Size | PSO–TS*
 ![Demand_Optimization](figures_summary/sizing_PSO_TS_33bus_20250612_015301/figure_02.png)  
-*BESS Optimal Demand Schedule and SoC Estimation| PSO–TS*
+*BESS Optimal Demand Schedule and SoC Estimation | PSO–TS*
 ![Grid Performance Overview Before](figures_summary/baseline_33bus/figure_01.png)  
 *Grid Performance Overview (Base Case/Without BESS)*
 ![Grid Performance Overview After](figures_summary/sizing_PSO_TS_33bus_20250612_015301/figure_03.png)  

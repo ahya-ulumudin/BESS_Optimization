@@ -1,0 +1,21 @@
+# Ignore MATLAB backup and temporary files
+*.asv
+*.fig
+*.mat
+*.bak
+*.tmp
+*.log
+
+# System-specific files
+.DS_Store
+Thumbs.db
+
+# Jupyter or Python cache (if applicable)
+__pycache__/
+*.pyc
+*.ipynb_checkpoints/
+
+# Output folders
+results/
+results_summary/
+figures_summary/

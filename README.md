@@ -93,6 +93,9 @@ The framework implements a two-stage hybrid metaheuristic approach combining **P
 ![Voltage Swings Profile After](figures_summary/sizing_PSO_TS_33bus_20250612_015301/figure_06.png)  
 *Bus Voltages Swing Profile (Optimized with PSO-TS)*
 
+![Load Flow Summary](figures_summary/load_flow_summary.png)  
+*Load Flow Summary | PSO–TS*
+
 ## 🛠 Requirements
 - MATLAB R2023b or newer
 - No special toolboxes required, but **Optimization Toolbox** may enhance performance

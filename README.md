@@ -1,4 +1,7 @@
 # BESS Optimization Framework using Hybrid PSO–TS
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![MATLAB](https://img.shields.io/badge/MATLAB-R2023b-blue)
+![Status](https://img.shields.io/badge/status-active-brightgreen)
 
 This repository contains a MATLAB-based optimization framework developed as part of a Master's research project titled:
 
@@ -66,6 +69,21 @@ The framework implements a two-stage hybrid metaheuristic approach combining **P
 - Visualization scripts are included in:
   - `display_results.m`
   - `placement_display_results.m`
+ 
+## 📊 Example Output
+
+![Placement_Optimization](figures_summary/Placement_PSO_TS_33bus_20250612_011740/figure_04.png)  
+*Projected BESS Location | PSO–TS*
+![Demand_Optimization](figures_summary/sizing_PSO_TS_33bus_20250612_015301/figure_02.png)  
+*BESS Optimal Demand Schedule and SoC Estimation| PSO–TS*
+![Grid Performance Overview Before](figures_summary/baseline_33bus/figure_01.png)  
+*Grid Performance Overview (Base Case/Without BESS)*
+![Grid Performance Overview After](figures_summary/sizing_PSO_TS_33bus_20250612_015301/figure_03.png)  
+*Grid Performance Overview (Optimized with PSO-TS)*
+![Voltage Swings Profile Before](figures_summary/baseline_33bus/figure_02.png)  
+*Bus Voltages Swing Profile (Base Case/Without BESS)*
+![Voltage Swings Profile After](figures_summary/sizing_PSO_TS_33bus_20250612_015301/figure_06.png)  
+*Bus Voltages Swing Profile (Optimized with PSO-TS)*
 
 ## 🛠 Requirements
 - MATLAB R2023b or newer

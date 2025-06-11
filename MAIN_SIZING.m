@@ -1,8 +1,8 @@
 clc; clear; format short; tic;
 
 %%  LOAD NETWORK AND PROFILE DATA
-mm     = load('loaddata69bus.m');              % Bus data (bus number, load data)chenge 33 or 69 bus
-ll     = load('linedata69bus.m');              % Line data (connection, impedance)change 33 or 69 bus
+mm     = load('loaddata33bus.m');              % Bus data (bus number, load data)chenge 33 or 69 bus
+ll     = load('linedata33bus.m');              % Line data (connection, impedance)change 33 or 69 bus
 PVout  = load('PV_out_profile.m');             % Hourly PV output profile
 L_prof = load('Residential_Load_Profile.m');   % Hourly load profile
 
@@ -12,7 +12,7 @@ KVb  = 12.66;                                  % Base voltage (kV)
 Zb   = (KVb^2) / MVAb;                         % Base impedance (Ohm)
 
 %% CONFIGURATION PARAMETERS
-Bus_Placement = [11, 26, 27, 50, 61];           % Predefined BESS installation buses 33: (14, 18, 24, 26, 31) 69: (11, 26, 27, 50, 61) or manual provided
+Bus_Placement = [14, 18, 24, 26, 31];           % Predefined BESS installation buses 33: (14, 18, 24, 26, 31) 69: (11, 26, 27, 50, 61) or manual provided
 BESS_Number   = 5;                              % Number of BESS units
 bus           = size(mm, 1);                    % Number of buses
 
@@ -50,7 +50,8 @@ Matrix_Load         = zeros(bus, 24);             % Bus load per hour
 %% LOAD PREVIOUS SOLUTION IF AVAILABLE
 use_previous = false;  % Set 'true' to use previous result, 'false' for random initialization
 
-filename = sprintf('BESS_Demand_%s_%dbus.mat', opt, bus);
+filename = fullfile('results', sprintf('BESS_Demand_%dbus-%s.mat', bus, opt));
+
 if use_previous && exist(filename, 'file')
     load(filename, 'BESS_Output', 'Bus_Placement');
     fprintf('>> Loaded previous BESS solution from %s\n', filename);

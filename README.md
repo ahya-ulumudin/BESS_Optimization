@@ -80,4 +80,5 @@ If you use this framework in your work, please cite:
 
 ## 📝 License
 
-This project is open-source and available under the MIT License.
+This project is licensed under the [MIT License](LICENSE).  
+You are free to use, modify, and distribute this code for academic or commercial purposes, provided that proper credit is given to the original author.

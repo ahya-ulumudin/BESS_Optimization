@@ -1,6 +1,6 @@
 function [BESS_Location, BESS_Output, obj, fitness_history, fitness_eval, iter, eval_total, best_iter_idx, best_eval_idx] = ...
     Placement_Optimization_PSO_TS(lower_bound, upper_bound, BESS_Number, Candidate_Buses, ...
-    hour, mm, ll, sel_pv, sel_lp, MVAb, Zb, stagnation_limit, Bus_Ranked, use_ranked_bus_guidance, guided_fraction)
+    hour, mm, ll, sel_pv, sel_lp, MVAb, Zb, stagnation_limit, Bus_Ranked, use_ranked_bus_guidance, guided_fraction, BESS_Eff)
 % PLACEMENT_OPTIMIZATION_PSO_TS_R1
 % Hybrid PSO-TS optimization for BESS placement and sizing
 
@@ -47,7 +47,7 @@ function [BESS_Location, BESS_Output, obj, fitness_history, fitness_eval, iter, 
         end
 
         [loc, out] = decode_particle(position(i,:), BESS_Number, Candidate_Buses, lower_bound, upper_bound);
-        fitness(i) = Placement_Objective(loc, out, mm, ll, sel_pv, sel_lp, MVAb, Zb);
+        fitness(i) = Placement_Objective(loc, out, mm, ll, sel_pv, sel_lp, MVAb, Zb, BESS_Eff);
         eval_total = eval_total + 1;
         fitness_eval(end+1) = fitness(i);
     end
@@ -74,7 +74,7 @@ function [BESS_Location, BESS_Output, obj, fitness_history, fitness_eval, iter, 
             position(i,1:BESS_Number) = round(position(i,1:BESS_Number));
 
             [loc, out] = decode_particle(position(i,:), BESS_Number, Candidate_Buses, lower_bound, upper_bound);
-            fit = Placement_Objective(loc, out, mm, ll, sel_pv, sel_lp, MVAb, Zb);
+            fit = Placement_Objective(loc, out, mm, ll, sel_pv, sel_lp, MVAb, Zb, BESS_Eff);
             eval_total = eval_total + 1;
             fitness_eval(end+1) = fit;
 
@@ -105,7 +105,7 @@ function [BESS_Location, BESS_Output, obj, fitness_history, fitness_eval, iter, 
         if mod(gen, ts_interval) == 0
             [refined_gbest, refined_obj, ts_eval, ts_hist, ts_terminated] = TabuSearch_LocalRefine( ...
                 gbest, obj, ts_max_iter, lower_bound, upper_bound, BESS_Number, Candidate_Buses, ...
-                mm, ll, sel_pv, sel_lp, MVAb, Zb, num_neighbors, stagnation_limit, hour, tolerance);
+                mm, ll, sel_pv, sel_lp, MVAb, Zb, num_neighbors, stagnation_limit, hour, tolerance, BESS_Eff);
 
             eval_total = eval_total + ts_eval;
 
@@ -145,7 +145,7 @@ end
 function [best_solution, best_obj, eval_count, fitness_history, terminated] = TabuSearch_LocalRefine( ...
     start_solution, start_obj, max_iter, ...
     lower_bound, upper_bound, BESS_Number, Candidate_Buses, ...
-    mm, ll, sel_pv, sel_lp, MVAb, Zb, num_neighbors, stagnation_limit, hour, tolerance)
+    mm, ll, sel_pv, sel_lp, MVAb, Zb, num_neighbors, stagnation_limit, hour, tolerance, BESS_Eff)
 % TABUSEARCH_LOCALREFINE
 % Local refinement using Tabu Search algorithm.
 
@@ -196,7 +196,7 @@ function [best_solution, best_obj, eval_count, fitness_history, terminated] = Ta
 
             % === Evaluate fitness ===
             [loc, out] = decode_particle(neighbor, BESS_Number, Candidate_Buses, lower_bound, upper_bound);
-            neighbor_obj = Placement_Objective(loc, out, mm, ll, sel_pv, sel_lp, MVAb, Zb);
+            neighbor_obj = Placement_Objective(loc, out, mm, ll, sel_pv, sel_lp, MVAb, Zb, BESS_Eff);
             eval_count = eval_count + 1;
 
             % === Tabu and Aspiration Check ===
@@ -247,7 +247,7 @@ function [best_solution, best_obj, eval_count, fitness_history, terminated] = Ta
             % stagnation_count = 0;
 
             [loc, out] = decode_particle(current_solution, BESS_Number, Candidate_Buses, lower_bound, upper_bound);
-            best_obj = Placement_Objective(loc, out, mm, ll, sel_pv, sel_lp, MVAb, Zb);
+            best_obj = Placement_Objective(loc, out, mm, ll, sel_pv, sel_lp, MVAb, Zb, BESS_Eff);
             eval_count = eval_count + 1;
             fitness_history(iter) = best_obj;
 

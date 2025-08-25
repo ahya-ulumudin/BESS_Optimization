@@ -32,10 +32,12 @@ lower_bound = -upper_bound;                      % Lower bound
 % System Performance Limits
 max_expected_Pwr_Losses = 0.05;                  % Acceptable maximum system losses
 max_expected_Vol_Dev    = 0.05;                  % Acceptable maximum voltage deviation
+BESS_RTE                = 0.9;                   % Round Trip Efficiency (90%)      
+BESS_Eff                = sqrt(BESS_RTE);        % Charging/Discharging Efficiency
 
 % Optimization Parameters
 stagnation_limit = 100;                          % Stagnation limit for optimizer
-opt = 'PSO_TS';                                  % Selected optimization method ('PSO', 'TS', or 'PSO_TS')
+opt = 'PSO_TS';                                      % Selected optimization method ('PSO', 'TS', or 'PSO_TS')
 
 %% DATA STRUCTURES INITIALIZATION
 BESS_Demand         = zeros(bus, 1);             % BESS injection per bus
@@ -67,24 +69,24 @@ end
 
 %% DEFINE OBJECTIVES FUCTION
 objective_function = @(BESS_Output) Sizing_Objective( ...
-    round(BESS_Output / 10) * 10, mm, ll, PVout, L_prof, MVAb, Zb, upper_bound, Bus_Placement);
+    round(BESS_Output / 10) * 10, mm, ll, PVout, L_prof, MVAb, Zb, upper_bound, Bus_Placement, BESS_Eff);
 
 %% CALL OPTIMIZER
 switch opt
     case 'PSO'
         [BESS_Output, obj, fitness_history, iter, eval_total] = ...
             Sizing_Optimization_PSO(mm, lower_bound, upper_bound, BESS_Number, ...
-            objective_function, stagnation_limit, initial_solution);
+            objective_function, stagnation_limit, initial_solution, BESS_Eff);
 
     case 'TS'
         [BESS_Output, obj, fitness_history, iter, eval_total] = ...
             Sizing_Optimization_TS(mm, lower_bound, upper_bound, BESS_Number, ...
-            objective_function, stagnation_limit, initial_solution);
+            objective_function, stagnation_limit, initial_solution, BESS_Eff);
 
     case 'PSO_TS'
         [BESS_Output, obj, fitness_history, iter, eval_total] = ...
             Sizing_Optimization_PSO_TS(mm, lower_bound, upper_bound, BESS_Number, ...
-            objective_function, stagnation_limit, initial_solution);
+            objective_function, stagnation_limit, initial_solution, BESS_Eff);
 
     otherwise
         error('Unsupported optimization method: %s', opt);
@@ -96,7 +98,19 @@ for hour = 1:24
     sel_lp = L_prof(hour, 2);
 
     % Update BESS Demand for Current Hour
-    BESS_Demand(Bus_Placement) = round(BESS_Output(:, hour) / 10) * 10;
+    raw_out = round(BESS_Output(:, hour) / 10) * 10;   % kW per unit BESS
+    BESS_Demand(:) = 0;
+    
+    pos_mask = raw_out >= 0;   % discharge
+    neg_mask = raw_out <  0;   % charge
+    if any(pos_mask)
+        idx_pos = Bus_Placement(pos_mask);
+        BESS_Demand(idx_pos) = raw_out(pos_mask) * BESS_Eff;
+    end
+    if any(neg_mask)
+        idx_neg = Bus_Placement(neg_mask);
+        BESS_Demand(idx_neg) = raw_out(neg_mask) / BESS_Eff;
+    end
 
     % Perform Hourly Load Flow
     [voltage, P_Loss_Kw, Q_Loss_KVAr, PL, QL, ld, node, branch, va, voltage_deviation, total_voltage_deviation] = ...

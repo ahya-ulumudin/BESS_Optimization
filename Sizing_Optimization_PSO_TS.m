@@ -1,6 +1,6 @@
 function [BESS_Output, obj, fitness_history, iter, eval_total] = ...
     Sizing_Optimization_PSO_TS(mm, lower_bound, upper_bound, BESS_Number, objective_function, stagnation_limit, initial_solution, BESS_Eff)
-% SIZING_OPTIMIZATION_PSO_TS_TRY
+% SIZING_OPTIMIZATION_PSO_TS
 % Hybrid Particle Swarm Optimization (PSO) and Tabu Search (TS)
 % for optimal 24-hour BESS demand scheduling in distribution systems.
 

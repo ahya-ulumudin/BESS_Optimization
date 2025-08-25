@@ -1,5 +1,5 @@
 function [BESS_Output, obj, fitness_history, iter, eval_total] = ...
-    Sizing_Optimization_PSO_TS(mm, lower_bound, upper_bound, BESS_Number, objective_function, stagnation_limit, initial_solution)
+    Sizing_Optimization_PSO_TS(mm, lower_bound, upper_bound, BESS_Number, objective_function, stagnation_limit, initial_solution, BESS_Eff)
 % SIZING_OPTIMIZATION_PSO_TS_TRY
 % Hybrid Particle Swarm Optimization (PSO) and Tabu Search (TS)
 % for optimal 24-hour BESS demand scheduling in distribution systems.
@@ -90,7 +90,7 @@ function [BESS_Output, obj, fitness_history, iter, eval_total] = ...
             fprintf('PSO Generation %3d | Best Fitness: %.6f | Evaluations: %d\n', gen, obj, eval_total);
 
             [refined_gbest, refined_obj, ts_eval, ts_hist, ts_iter] = ...
-                TabuSearch_LocalRefine(gbest, obj, 50, lower_bound, upper_bound, BESS_Number, objective_function, tolerance);
+                TabuSearch_LocalRefine(gbest, obj, 50, lower_bound, upper_bound, BESS_Number, objective_function, tolerance, BESS_Eff);
 
             eval_total = eval_total + ts_eval;
             total_ts_iterations = total_ts_iterations + ts_iter;
@@ -158,7 +158,7 @@ function [BESS_Output, obj, fitness_history, iter, eval_total] = ...
 end
 
 function [refined_gbest, refined_obj, ts_eval, ts_hist, ts_iter] = ...
-    TabuSearch_LocalRefine(gbest, obj, max_iter, lower_bound, upper_bound, BESS_Number, objective_function, tolerance)
+    TabuSearch_LocalRefine(gbest, obj, max_iter, lower_bound, upper_bound, BESS_Number, objective_function, tolerance, BESS_Eff)
 % TABUSEARCH_LOCALREFINE
 % Tabu Search local refinement with aspiration criterion and soft restart.
 

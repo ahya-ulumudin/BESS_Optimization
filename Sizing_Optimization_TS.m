@@ -1,6 +1,6 @@
 function [best_solution, obj, fitness_history, iter, eval_total] = ...
     Sizing_Optimization_TS(mm, lower_bound, upper_bound, BESS_Number, ...
-    objective_function, stagnation_limit, initial_solution)
+    objective_function, stagnation_limit, initial_solution, BESS_Eff)
 % SIZING_OPTIMIZATION_TS
 % Tabu Search optimization for 24-hour BESS sizing and scheduling with
 % aspiration criterion, soft restart, and stable stagnation logic.

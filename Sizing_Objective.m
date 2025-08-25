@@ -1,4 +1,4 @@
-function obj = Sizing_Objective(BESS_Output, mm, ll, PVout, L_prof, MVAb, Zb, upper_bound, Bus_Placement)
+function obj = Sizing_Objective(BESS_Output, mm, ll, PVout, L_prof, MVAb, Zb, upper_bound, Bus_Placement, BESS_Eff)
 % SIZING_OBJECTIVE Evaluate the composite objective function for BESS sizing and 24-hour scheduling optimization.
 
     %% DECLARE GLOBAL VARIABLE
@@ -31,8 +31,18 @@ function obj = Sizing_Objective(BESS_Output, mm, ll, PVout, L_prof, MVAb, Zb, up
         sel_lp = L_prof(hour, 2);
 
         % Generate BESS injection profile for the hour
+        raw_out = BESS_Output(:, hour);          % vektor [BESS_Number x 1] for this hour
         BESS_Demand = zeros(num_buses, 1);
-        BESS_Demand(Bus_Placement) = BESS_Output(:, hour);
+        pos_mask = raw_out >= 0;                 % discharge
+        neg_mask = raw_out <  0;                 % charge
+        if any(pos_mask)
+            idx_pos = Bus_Placement(pos_mask);
+            BESS_Demand(idx_pos) = raw_out(pos_mask) * BESS_Eff;
+        end
+        if any(neg_mask)
+            idx_neg = Bus_Placement(neg_mask);
+            BESS_Demand(idx_neg) = raw_out(neg_mask) / BESS_Eff;
+        end
 
         % Perform hourly load flow analysis
         [voltage, P_Loss_Kw, ~, ~, ~, ld, ~, ~, ~, ~, ~] = ...

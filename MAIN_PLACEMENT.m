@@ -22,6 +22,7 @@ BESS_Number = 5;                             % Number of BESS units
 Candidate_Buses = setdiff(mm(:,1)', 1);      % Candidate buses for BESS installation (excluding slack bus)
 SoC_max = 0.9;                               % Maximum state of charge (per unit)
 SoC_min = 0.2;                               % Minimum state of charge (per unit)
+BESS_RTE = 0.9;                              % Roundtrip Efficiency (90%)                       
 BESS_Demand = zeros(size(mm, 1), 1);         % Initial BESS demand (zero)
 bus = size(mm, 1);                           % Total number of buses
 
@@ -31,6 +32,7 @@ upper_bound = round(cap / 50) * 50;          % Upper bound for BESS sizing (roun
 lower_bound = -upper_bound;                  % Lower bound for BESS sizing
 max_expected_Pwr_Losses = 0.05;              % Expected maximum power loss (p.u.)
 max_expected_Vol_Dev = 0.05;                 % Expected maximum voltage deviation (p.u.)
+BESS_Eff = sqrt(BESS_RTE);                   % Charge/Discharge Efficiency
 
 %% === Initial Solution Settings ===
 
@@ -74,22 +76,32 @@ for hour = 1:24
         case 'PSO'
             [BESS_Location, BESS_Output, obj, fitness_history, fitness_eval, iter, eval_total, best_iter_idx, best_eval_idx] = ...
                 Placement_Optimization_PSO(lower_bound, upper_bound, BESS_Number, Candidate_Buses, hour, mm, ll, sel_pv, sel_lp, ...
-                MVAb, Zb, stagnation_limit, Bus_Ranked, use_ranked_bus_guidance, guided_fraction);
+                MVAb, Zb, stagnation_limit, Bus_Ranked, use_ranked_bus_guidance, guided_fraction, BESS_Eff);
         case 'TS'
             [BESS_Location, BESS_Output, obj, fitness_history, fitness_eval, iter, eval_total, best_iter_idx, best_eval_idx] = ...
                 Placement_Optimization_TS(lower_bound, upper_bound, BESS_Number, Candidate_Buses, hour, mm, ll, sel_pv, sel_lp, ...
-                MVAb, Zb, stagnation_limit, Bus_Ranked, use_ranked_bus_guidance, guided_fraction);
+                MVAb, Zb, stagnation_limit, Bus_Ranked, use_ranked_bus_guidance, guided_fraction, BESS_Eff);
         case 'PSO_TS'
             [BESS_Location, BESS_Output, obj, fitness_history, fitness_eval, iter, eval_total, best_iter_idx, best_eval_idx] = ...
                 Placement_Optimization_PSO_TS(lower_bound, upper_bound, BESS_Number, Candidate_Buses, hour, mm, ll, sel_pv, sel_lp, ...
-                MVAb, Zb, stagnation_limit, Bus_Ranked, use_ranked_bus_guidance, guided_fraction);
+                MVAb, Zb, stagnation_limit, Bus_Ranked, use_ranked_bus_guidance, guided_fraction, BESS_Eff);
         otherwise
             error('Unsupported optimization method: %s', opt);
     end
 
     % Perform hourly load flow analysis
     BESS_Demand = zeros(size(mm, 1), 1);
-    BESS_Demand(BESS_Location) = BESS_Output;
+    pos_mask = BESS_Output >= 0;                        % discharge
+    neg_mask = BESS_Output <  0;                        % charge
+    
+    if any(pos_mask)
+        idx_pos = BESS_Location(pos_mask);
+        BESS_Demand(idx_pos) = BESS_Output(pos_mask) * BESS_Eff;
+    end
+    if any(neg_mask)
+        idx_neg = BESS_Location(neg_mask);
+        BESS_Demand(idx_neg) = BESS_Output(neg_mask) / BESS_Eff;
+    end
     [voltage, P_Loss_Kw, Q_Loss_KVAr, PL, QL, ld, node, branch, va, voltage_deviation, total_voltage_deviation] = ...
         HourlyLoadFlow(mm, ll, sel_pv, sel_lp, MVAb, Zb, BESS_Demand);
 

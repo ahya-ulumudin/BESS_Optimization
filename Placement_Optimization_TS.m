@@ -1,6 +1,6 @@
 function [BESS_Location, BESS_Output, obj, fitness_history, fitness_eval, iter, eval_total, best_iter_idx, best_eval_idx] = ...
     Placement_Optimization_TS(lower_bound, upper_bound, BESS_Number, Candidate_Buses, ...
-    hour, mm, ll, sel_pv, sel_lp, MVAb, Zb, stagnation_limit, Bus_Ranked, use_ranked_bus_guidance, guided_fraction)
+    hour, mm, ll, sel_pv, sel_lp, MVAb, Zb, stagnation_limit, Bus_Ranked, use_ranked_bus_guidance, guided_fraction, BESS_Eff)
 % PLACEMENT_OPTIMIZATION_TS_R1
 % Tabu Search for BESS placement with aspiration criterion and soft restart on stagnation.
 
@@ -28,7 +28,7 @@ function [BESS_Location, BESS_Output, obj, fitness_history, fitness_eval, iter, 
     current_solution = [selected_buses, selected_outputs];
     best_solution = current_solution;
 
-    obj = Placement_Objective(selected_buses, selected_outputs, mm, ll, sel_pv, sel_lp, MVAb, Zb);
+    obj = Placement_Objective(selected_buses, selected_outputs, mm, ll, sel_pv, sel_lp, MVAb, Zb, BESS_Eff);
     best_obj = obj;
     prev_best_obj = best_obj;
     eval_total = eval_total + 1;
@@ -77,7 +77,7 @@ function [BESS_Location, BESS_Output, obj, fitness_history, fitness_eval, iter, 
 
             loc = neighbor(1:BESS_Number);
             out = neighbor(BESS_Number+1:end);
-            fval = Placement_Objective(loc, out, mm, ll, sel_pv, sel_lp, MVAb, Zb);
+            fval = Placement_Objective(loc, out, mm, ll, sel_pv, sel_lp, MVAb, Zb, BESS_Eff);
             eval_total = eval_total + 1;
 
             is_in_tabu = ismember(neighbor, tabu_list, 'rows');
@@ -133,7 +133,7 @@ function [BESS_Location, BESS_Output, obj, fitness_history, fitness_eval, iter, 
             tabu_list = zeros(tabu_tenure, num_variables);
             % stagnation_count = 0;
 
-            obj = Placement_Objective(selected_buses, selected_outputs, mm, ll, sel_pv, sel_lp, MVAb, Zb);
+            obj = Placement_Objective(selected_buses, selected_outputs, mm, ll, sel_pv, sel_lp, MVAb, Zb, BESS_Eff);
             fitness_eval(end+1) = obj;
             eval_total = eval_total + 1;
             continue;

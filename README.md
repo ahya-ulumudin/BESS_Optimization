@@ -108,7 +108,8 @@ A proper open-source license (e.g. MIT) will be added later.
 
 ## 📖 Citation
 
-If you use this framework in your work, please cite:
+If you use this framework in academic review or discussion, please cite:
 
-> Ahya Ulumudin (2025). Hybrid PSO–TS Optimization Framework for BESS Planning. GitHub Repository.  
+> Ahya Ulumudin (2025). Hybrid PSO–TS Optimization Framework for BESS Planning.  
+> Repository available for academic review (restricted license).  
 > [https://github.com/ahya-ulumudin/BESS_Optimization](https://github.com/ahya-ulumudin/BESS_Optimization)

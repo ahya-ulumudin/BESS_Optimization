@@ -1,4 +1,4 @@
-function obj = Placement_Objective(BESS_Locations, BESS_Output, mm, ll, sel_pv, sel_lp, MVAb, Zb)
+function obj = Placement_Objective(BESS_Locations, BESS_Output, mm, ll, sel_pv, sel_lp, MVAb, Zb, BESS_Eff)
 % PLACEMENT_OBJECTIVE Evaluate the objective function for initial BESS placement optimization (snapshot 1 hour).
 
     %% Initialize
@@ -15,6 +15,16 @@ function obj = Placement_Objective(BESS_Locations, BESS_Output, mm, ll, sel_pv, 
     %% Generate BESS Active Power Injection
     BESS_Demand = zeros(num_buses, 1);
     BESS_Demand(BESS_Locations) = BESS_Output;
+    pos_mask = BESS_Output >= 0;   % unit yang discharge
+    neg_mask = BESS_Output <  0;   % unit yang charge
+    if any(pos_mask)
+        idx_pos = BESS_Locations(pos_mask);
+        BESS_Demand(idx_pos) = BESS_Output(pos_mask) * BESS_Eff;
+    end
+    if any(neg_mask)
+        idx_neg = BESS_Locations(neg_mask);
+        BESS_Demand(idx_neg) = BESS_Output(neg_mask) / BESS_Eff;
+    end
 
     %% Perform Load Flow
     [voltage, P_Loss_Kw, ~, ~, ~, ld, ~, ~, ~, ~, ~] = ...

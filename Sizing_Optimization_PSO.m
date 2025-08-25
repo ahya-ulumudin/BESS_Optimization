@@ -1,4 +1,4 @@
-function [BESS_Output, obj, fitness_history, iter, eval_total] = Sizing_Optimization_PSO(mm, lower_bound, upper_bound, BESS_Number, objective_function, stagnation_limit, initial_solution)
+function [BESS_Output, obj, fitness_history, iter, eval_total] = Sizing_Optimization_PSO(mm, lower_bound, upper_bound, BESS_Number, objective_function, stagnation_limit, initial_solution, BESS_Eff)
 % SIZING_OPTIMIZATION_PSO
 % Particle Swarm Optimization (PSO) for 24-hour BESS demand scheduling optimization.
 

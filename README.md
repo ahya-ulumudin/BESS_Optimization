@@ -100,14 +100,15 @@ The framework implements a two-stage hybrid metaheuristic approach combining **P
 - MATLAB R2023b or newer
 - No special toolboxes required, but **Optimization Toolbox** may enhance performance
 
+## 📝 License
+
+This repository is currently under restricted use. 
+The code is shared for academic review only and is not open-sourced yet. 
+A proper open-source license (e.g. MIT) will be added later.
+
 ## 📖 Citation
 
 If you use this framework in your work, please cite:
 
 > Ahya Ulumudin (2025). Hybrid PSO–TS Optimization Framework for BESS Planning. GitHub Repository.  
 > [https://github.com/ahya-ulumudin/BESS_Optimization](https://github.com/ahya-ulumudin/BESS_Optimization)
-
-## 📝 License
-
-This project is licensed under the [MIT License](LICENSE).  
-You are free to use, modify, and distribute this code for academic or commercial purposes, provided that proper credit is given to the original author.
